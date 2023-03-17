@@ -1,6 +1,7 @@
 #include "request.hpp"
 
 #include "clients.hpp"
+#include "response.hpp"
 
 #include <arpa/inet.h>
 #include <stdint.h>
@@ -83,7 +84,8 @@ static inline void do_read_body(const int index)
     switch (status) {
     case BODY_DONE:
         // perform the request
-        // then reset
+        // then reset client buffers
+        response::echo(index); // send the message body back to sender
         clients.c_clients[index].reset();
         break;
     case BODY_NOT_DONE:

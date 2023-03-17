@@ -38,20 +38,15 @@ int clients::add(const int fd)
     return 0;
 }
 
+// reset tcp connection and reset client
 void clients::reset(const int index) {
     auto &clients = clients_s::get_instance();
+    close(clients.p_clients[index].fd);
     clients.p_clients[index].fd      = -1;
     clients.p_clients[index].events  = 0;
     clients.p_clients[index].revents = 0;
 
-    memset(clients.c_clients[index].body, 0, sizeof(clients.c_clients[index].body));
-    memset(clients.c_clients[index].header, 0, sizeof(clients.c_clients[index].header));
-    clients.c_clients[index].header_done     = false;
-    clients.c_clients[index].body_length     = 0;
-    clients.c_clients[index].header_bytes_rd = 0;
-    clients.c_clients[index].body_bytes_rd   = 0;
+    clients.c_clients[index].reset();
     
     clients.number_of_clients--;
-
-    close(clients.p_clients[index].fd);
 }
